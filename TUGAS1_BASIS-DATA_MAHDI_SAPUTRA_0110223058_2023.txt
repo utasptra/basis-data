@@ -1,0 +1,873 @@
+
+Setting environment for using XAMPP for Windows.
+mahdi@MAHDI_SAPUTRA05 c:\xampp
+# mysql -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 10
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+Jawaban NO. 1 Buatlah database baru dengan nama: dbpegawai
+MariaDB [(none)]> CREATE DATABASE dbpegawai;
+Query OK, 1 row affected (0.002 sec)
+
+Jawaban NO. 2 Masuk ke dbpegawai dengan perintah USE
+MariaDB [(none)]> USE dbpegawai;
+Database changed
+MariaDB [dbpegawai]>
+
+Jawaban NO. 3 Buatlah tabel baru dengan nama: divisi, dengan kolom-kolom sbb:
+id int primary key auto_increment
+nama varchar(30) dengan contraint: wajib diisi dan tidak boleh sama
+MariaDB [dbpegawai]> CREATE TABLE divisi (
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> nama VARCHAR(30) NOT NULL UNIQUE);
+Query OK, 0 rows affected (0.038 sec)
+
+Jawaban NO. 4 Tampilkan deskripsi tabel divisi
+MariaDB [dbpegawai]> DESC divisi;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(30) | NO   | UNI | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.026 sec)
+
+Jawaban NO. 5 Buatlah tabel baru dengan nama: jabatan, dengan kolom-kolom sbb:
+id int primary key auto_increment
+nama varchar(30) dengan contraint: wajib diisi dan tidak boleh sama
+MariaDB [dbpegawai]> CREATE TABLE jabatan (
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> nama VARCHAR(30) NOT NULL UNIQUE);
+Query OK, 0 rows affected (0.044 sec)
+
+Jawaban NO. 6 Tampilkan deskripsi tabel jabatan
+MariaDB [dbpegawai]> DESC jabatan;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(30) | NO   | UNI | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.031 sec)
+
+Jawaban NO. 7 Buatlah tabel baru dengan nama: pegawai, dengan kolom-kolom sbb:
+id int primary key auto_increment
+nip char dengan constraint: wajib diisi, tidak boleh sama & 5 karakter
+nama varchar dengan constraint: wajib diisi dan maksimal 30 karakter
+gender enum('Laki-Laki','Perempuan') dengan constraint: wajib diisi
+tmp_lahir varchar dengan constraint: wajib diisi dan maksimal 30 karakter
+tgl_lahir date dengan constraint: wajib diisi
+iddivisi int sebagai foreign key, tidak boleh kosong, merujuk ke tabel divisi ke field id
+idjabatan int sebagai foreign key, tidak boleh kosong, merujuk ke tabel jabatan ke field id
+alamat text
+MariaDB [dbpegawai]> CREATE TABLE pegawai (
+    -> id INT PRIMARY KEY AUTO_INCREMENT,
+    -> nip CHAR(5) NOT NULL UNIQUE,
+    -> nama VARCHAR(30) NOT NULL,
+    -> gender ENUM('Laki-Laki', 'Perempuan') NOT NULL,
+    -> tmp_lahir VARCHAR(30) NOT NULL,
+    -> tgl_lahir DATE NOT NULL,
+    -> iddivisi INT NOT NULL,
+    -> idjabatan INT NOT NULL,
+    -> alamat TEXT,
+    -> FOREIGN KEY (iddivisi) REFERENCES divisi(id),
+    -> FOREIGN KEY (idjabatan) REFERENCES jabatan(id));
+Query OK, 0 rows affected (0.043 sec)
+
+Jawaban NO. 8 Tampilkan deskripsi tabel pegawai
+MariaDB [dbpegawai]> DESC pegawai;
++-----------+-------------------------------+------+-----+---------+----------------+
+| Field     | Type                          | Null | Key | Default | Extra          |
++-----------+-------------------------------+------+-----+---------+----------------+
+| id        | int(11)                       | NO   | PRI | NULL    | auto_increment |
+| nip       | char(5)                       | NO   | UNI | NULL    |                |
+| nama      | varchar(30)                   | NO   |     | NULL    |                |
+| gender    | enum('Laki-Laki','Perempuan') | NO   |     | NULL    |                |
+| tmp_lahir | varchar(30)                   | NO   |     | NULL    |                |
+| tgl_lahir | date                          | NO   |     | NULL    |                |
+| iddivisi  | int(11)                       | NO   | MUL | NULL    |                |
+| idjabatan | int(11)                       | NO   | MUL | NULL    |                |
+| alamat    | text                          | YES  |     | NULL    |                |
++-----------+-------------------------------+------+-----+---------+----------------+
+9 rows in set (0.026 sec)
+
+Jawaban NO. 9 Tampilkan tabel-tabel yang ada di dbpegawai
+MariaDB [dbpegawai]> SHOW TABLES;
++---------------------+
+| Tables_in_dbpegawai |
++---------------------+
+| divisi              |
+| jabatan             |
+| pegawai             |
++---------------------+
+3 rows in set (0.001 sec)
+
+Jawaban NO. 10 Input data divisi => SDM, Keuangan, Marketing, IT
+MariaDB [dbpegawai]> INSERT INTO divisi (nama) VALUES
+    -> ('SDM'),('Keuangan'),('Marketing'),('IT');
+Query OK, 4 rows affected (0.009 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+Jawaban NO. 11 Tampilkan seluruh data divisi
+MariaDB [dbpegawai]> SELECT * FROM divisi;
++----+-----------+
+| id | nama      |
++----+-----------+
+|  4 | IT        |
+|  2 | Keuangan  |
+|  3 | Marketing |
+|  1 | SDM       |
++----+-----------+
+4 rows in set (0.001 sec)
+
+Jawaban NO. 12 Input data jabatan => Direktur, Manajer, Asisten Manajer, Staff
+MariaDB [dbpegawai]> INSERT INTO jabatan (nama) VALUES
+    -> ('Direktur'),('Manajer'),('Asisten Manajer'),('Staff');
+Query OK, 4 rows affected (0.009 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+Jawaban NO. 13 Tampilkan seluruh data jabatan
+MariaDB [dbpegawai]> SELECT * FROM jabatan;
++----+-----------------+
+| id | nama            |
++----+-----------------+
+|  3 | Asisten Manajer |
+|  1 | Direktur        |
+|  2 | Manajer         |
+|  4 | Staff           |
++----+-----------------+
+4 rows in set (0.001 sec)
+
+Jawaban NO. 14 Input 20 orang pegawai ( 1 divisi 5 orang, untuk gender dan jabatan diacak)
+MariaDB [dbpegawai]> INSERT INTO pegawai (nip, nama, gender, tmp_lahir, tgl_lahir, iddivisi, idjabatan, alamat) VALUES
+    -> ('01', 'Muhammad Ali', 'Laki-Laki', 'Loisville', '1942-01-17', 1, 1, 'Jl. Muhammad Ali No. 1'),
+    -> ('02', 'Maria Susanti', 'Perempuan', 'Berlin', '1985-02-05', 3, 4, 'Jl. Berlin No. 2'),
+    -> ('03', 'John Johnson', 'Laki-Laki', 'London', '1978-05-10', 2, 3, 'Jl. London No. 3'),
+    -> ('04', 'Anna Kowalski', 'Perempuan', 'Warsaw', '1990-03-20', 4, 2, 'Jl. Warsaw No. 4'),
+    -> ('05', 'Pierre Dupont', 'Laki-Laki', 'Paris', '1982-07-15', 1, 4, 'Jl. Paris No. 5');
+Query OK, 5 rows affected (0.010 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+MariaDB [dbpegawai]> INSERT INTO pegawai (nip, nama, gender, tmp_lahir, tgl_lahir, iddivisi, idjabatan, alamat) VALUES
+    -> ('06', 'Shopia Muller', 'Perempuan', 'Munich', '1977-06-25', 2, 1, 'Jl. Munich No. 6'),
+    -> ('07', 'Alessandro Rossi', 'Laki-Laki', 'Rome', '1980-10-08', 3, 2, 'Jl. Rome No. 7'),
+    -> ('08', 'Elena Petrova', 'Perempuan', 'Moscow', '1970-03-16', 4, 3, 'Jl. Moscow No. 10'),
+    -> ('09', 'Jose Fernandez', 'Laki-Laki', 'London', '1987-07-07', 1, 4, 'Jl. London No. 8'),
+    -> ('10', 'Lea Dyobies', 'Perempuan', 'Tokyo', '1998-01-11', 2, 1, 'Jl. Tokyo No. 12');
+Query OK, 5 rows affected (0.008 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+MariaDB [dbpegawai]> INSERT INTO pegawai (nip, nama, gender, tmp_lahir, tgl_lahir, iddivisi, idjabatan, alamat) VALUES
+    -> ('11', 'Muhammad Yusuf', 'Laki-Laki', 'Berlin', '1966-07-19', 1, 3, 'Jl. Berlin  No. 12'),
+    -> ('12', 'Gavanni Sarah', 'Perempuan', 'Tanjung', '1965-09-05', 2, 4, 'Jl. Tanjung  No. 1'),
+    -> ('13', 'Mawar Nisanti', 'Perempuan', 'Depok', '1976-11-28', 4, 2, 'Jl. Depok  No. 7'),
+    -> ('14', 'Mawar Nisanti', 'Perempuan', 'Depok', '1976-11-28', 4, 2, 'Jl. Depok  No. 7'),
+    -> ('15', 'Siti Annisa', 'Perempuan', 'Bekasi', '1989-03-24', 1, 3, 'Jl. Bekasi  No. 5'),
+    -> ('16', 'Saras Tatamin', 'Perempuan', 'Bojonegoro', '1987-09-14', 2, 4, 'Jl. Bojonegoro  No. 88'),
+    -> ('17', 'Hasan Asep', 'Laki-Laki', 'Srengseng', '1982-02-18', 1, 1, 'Jl. Srengseng  No. 8'),
+    -> ('18', 'Hasan Asep', 'Perempuan', 'Gandul', '1997-07-23', 3, 2, 'Jl. Gandul  No. 12'),
+    -> ('19', 'Asep Supratman', 'Laki-Laki', 'Bogor', '1991-03-29', 4, 3, 'Jl. Bogor  No. 19'),
+    -> ('20', 'Siti Khodijah', 'Perempuan', 'Bogor', '1999-09-29', 1, 4, 'Jl. Bogor  No. 19');
+Query OK, 10 rows affected (0.009 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+Jawaban NO. 15 Tampilkan seluruh data pegawai
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai;
++----+-----+------------------+-----------+------------+------------+----------+-----------+------------------------+
+| id | nip | nama             | gender    | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 |
++----+-----+------------------+-----------+------------+------------+----------+-----------+------------------------+
+|  1 | 01  | Muhammad Ali     | Laki-Laki | Loisville  | 1942-01-17 |        1 |         1 | Jl. Muhammad Ali No. 1 |
+|  2 | 02  | Maria Susanti    | Perempuan | Berlin     | 1985-02-05 |        3 |         4 | Jl. Berlin No. 2       |
+|  3 | 03  | John Johnson     | Laki-Laki | London     | 1978-05-10 |        2 |         3 | Jl. London No. 3       |
+|  4 | 04  | Anna Kowalski    | Perempuan | Warsaw     | 1990-03-20 |        4 |         2 | Jl. Warsaw No. 4       |
+|  5 | 05  | Pierre Dupont    | Laki-Laki | Paris      | 1982-07-15 |        1 |         4 | Jl. Paris No. 5        |
+|  6 | 06  | Shopia Muller    | Perempuan | Munich     | 1977-06-25 |        2 |         1 | Jl. Munich No. 6       |
+|  7 | 07  | Alessandro Rossi | Laki-Laki | Rome       | 1980-10-08 |        3 |         2 | Jl. Rome No. 7         |
+|  8 | 08  | Elena Petrova    | Perempuan | Moscow     | 1970-03-16 |        4 |         3 | Jl. Moscow No. 10      |
+|  9 | 09  | Jose Fernandez   | Laki-Laki | London     | 1987-07-07 |        1 |         4 | Jl. London No. 8       |
+| 10 | 10  | Lea Dyobies      | Perempuan | Tokyo      | 1998-01-11 |        2 |         1 | Jl. Tokyo No. 12       |
+| 11 | 11  | Muhammad Yusuf   | Laki-Laki | Berlin     | 1966-07-19 |        1 |         3 | Jl. Berlin  No. 12     |
+| 12 | 12  | Gavanni Sarah    | Perempuan | Tanjung    | 1965-09-05 |        2 |         4 | Jl. Tanjung  No. 1     |
+| 13 | 13  | Mawar Nisanti    | Perempuan | Depok      | 1976-11-28 |        4 |         2 | Jl. Depok  No. 7       |
+| 14 | 14  | Mawar Nisanti    | Perempuan | Depok      | 1976-11-28 |        4 |         2 | Jl. Depok  No. 7       |
+| 15 | 15  | Siti Annisa      | Perempuan | Bekasi     | 1989-03-24 |        1 |         3 | Jl. Bekasi  No. 5      |
+| 16 | 16  | Saras Tatamin    | Perempuan | Bojonegoro | 1987-09-14 |        2 |         4 | Jl. Bojonegoro  No. 88 |
+| 17 | 17  | Hasan Asep       | Laki-Laki | Srengseng  | 1982-02-18 |        1 |         1 | Jl. Srengseng  No. 8   |
+| 18 | 18  | Hasan Asep       | Perempuan | Gandul     | 1997-07-23 |        3 |         2 | Jl. Gandul  No. 12     |
+| 19 | 19  | Asep Supratman   | Laki-Laki | Bogor      | 1991-03-29 |        4 |         3 | Jl. Bogor  No. 19      |
+| 20 | 20  | Siti Khodijah    | Perempuan | Bogor      | 1999-09-29 |        1 |         4 | Jl. Bogor  No. 19      |
++----+-----+------------------+-----------+------------+------------+----------+-----------+------------------------+
+20 rows in set (0.001 sec)
+
+Jawaban NO. 16 Ubah data 5 orang pegawai (dengan ketentuan ubah 3 kolom(bebas))
+
+MariaDB [dbpegawai]> UPDATE pegawai SET nama = 'Faisal Fairuz', gender = 'Laki-Laki', tmp_lahir = 'Jakarta', alamat = 'Jl. Jakarta No. 6' WHERE id = 5;
+Query OK, 1 row affected (0.008 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET nama = 'Mahdi Saputra', gender = 'Laki-Laki', tmp_lahir = 'Jakarta', tgl_lahir = 1984-20-02, alamat = 'Jl. Jakarta No. 5' WHERE id = 4;
+Query OK, 1 row affected, 1 warning (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 1
+
+MariaDB [dbpegawai]> UPDATE pegawai SET nama = 'Ajeng Pratami', gender = 'Perempuan', tmp_lahir = 'Jakarta', alamat = 'Jl. Jakarta No
+. 52' WHERE id = 3;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET nama = 'Andino protomo', gender = 'Perempuan', tmp_lahir = 'Jakarta', alamat = 'Jl. Jakarta N
+o. 7' WHERE id = 2;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET nama = 'Ambias Tuti', gender = 'Perempuan', tmp_lahir = 'Jakarta', alamat = 'Jl. Jakarta No.
+71' WHERE id = 1;
+Query OK, 1 row affected (0.008 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+Jawaban NO. 17 Hapus 2 orang pegawai pegawai terakhir
+
+MariaDB [dbpegawai]> DELETE FROM pegawai WHERE id=20;
+Query OK, 1 row affected (0.008 sec)
+
+MariaDB [dbpegawai]> DELETE FROM pegawai WHERE id=19;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai;
++----+-----+-----------------+-----------+------------+------------+----------+-----------+------------------------+
+| id | nip | nama            | gender    | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 |
++----+-----+-----------------+-----------+------------+------------+----------+-----------+------------------------+
+|  1 | 01  | Ambias Tuti     | Perempuan | Jakarta    | 1942-01-17 |        1 |         1 | Jl. Jakarta No. 71     |
+|  2 | 02  | Andino protomo  | Perempuan | Jakarta    | 1985-02-05 |        1 |         1 | Jl. Jakarta No. 7      |
+|  3 | 03  | Ajeng Pratami   | Perempuan | Jakarta    | 1978-05-10 |        1 |         1 | Jl. Jakarta No. 52     |
+|  4 | 04  | Mahdi Saputra   | Laki-Laki | Jakarta    | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5      |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki | Jakarta    | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6      |
+|  6 | 06  | Shopia Muller   | Perempuan | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki | Rome       | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4      |
+|  8 | 08  | Elena Petrova   | Perempuan | Moscow     | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10      |
+|  9 | 09  | Jose Fernandez  | Laki-Laki | London     | 1987-07-07 |        2 |         2 | Jl. London No. 8       |
+| 10 | 10  | Lea Dyobies     | Perempuan | Tokyo      | 1998-01-11 |        2 |         2 | Jl. Tokyo No. 12       |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |
+| 12 | 12  | Gavanni Sarah   | Perempuan | Tanjung    | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1     |
+| 13 | 13  | Mawar Nisanti   | Perempuan | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |
+| 14 | 14  | Mawar Nisanti   | Perempuan | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |
+| 15 | 15  | Siti Annisa     | Perempuan | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |
+| 16 | 16  | Saras Tatamin   | Perempuan | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |
+| 17 | 17  | Hasan Asep      | Laki-Laki | Srengseng  | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8   |
+| 18 | 18  | Hasan Asep      | Perempuan | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |
++----+-----+-----------------+-----------+------------+------------+----------+-----------+------------------------+
+18 rows in set (0.000 sec)
+
+MariaDB [dbpegawai]> ALTER TABLE pegawai ADD COLUMN berat_badan FLOAT NOT NULL AFTER alamat;
+Query OK, 0 rows affected (0.011 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='55' WHERE id=1;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='66' WHERE id=2;
+Query OK, 1 row affected (0.002 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='67' WHERE id=3;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='68' WHERE id=4;
+Query OK, 1 row affected (0.002 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='62' WHERE id=5;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='53' WHERE id=6;
+Query OK, 1 row affected (0.004 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='43' WHERE id=7;
+Query OK, 1 row affected (0.001 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='49' WHERE id=8;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='54' WHERE id=9;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='45' WHERE id=10;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='65' WHERE id=11;
+Query OK, 1 row affected (0.002 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='66' WHERE id=12;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='67' WHERE id=13;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='68' WHERE id=14;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='69' WHERE id=15;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='59' WHERE id=16;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='58' WHERE id=17;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET berat_badan='57' WHERE id=18;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai;
++----+-----+-----------------+-----------+------------+------------+----------+-----------+------------------------+-------------+
+| id | nip | nama            | gender    | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan |
++----+-----+-----------------+-----------+------------+------------+----------+-----------+------------------------+-------------+
+|  1 | 01  | Ambias Tuti     | Perempuan | Jakarta    | 1942-01-17 |        1 |         1 | Jl. Jakarta No. 71     |          55 |
+|  2 | 02  | Andino protomo  | Perempuan | Jakarta    | 1985-02-05 |        1 |         1 | Jl. Jakarta No. 7      |          66 |
+|  3 | 03  | Ajeng Pratami   | Perempuan | Jakarta    | 1978-05-10 |        1 |         1 | Jl. Jakarta No. 52     |          67 |
+|  4 | 04  | Mahdi Saputra   | Laki-Laki | Jakarta    | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5      |          68 |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki | Jakarta    | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6      |          62 |
+|  6 | 06  | Shopia Muller   | Perempuan | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |          53 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki | Rome       | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4      |          43 |
+|  8 | 08  | Elena Petrova   | Perempuan | Moscow     | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10      |          49 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki | London     | 1987-07-07 |        2 |         2 | Jl. London No. 8       |          54 |
+| 10 | 10  | Lea Dyobies     | Perempuan | Tokyo      | 1998-01-11 |        2 |         2 | Jl. Tokyo No. 12       |          45 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |          65 |
+| 12 | 12  | Gavanni Sarah   | Perempuan | Tanjung    | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1     |          66 |
+| 13 | 13  | Mawar Nisanti   | Perempuan | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          67 |
+| 14 | 14  | Mawar Nisanti   | Perempuan | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          68 |
+| 15 | 15  | Siti Annisa     | Perempuan | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |          69 |
+| 16 | 16  | Saras Tatamin   | Perempuan | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |
+| 17 | 17  | Hasan Asep      | Laki-Laki | Srengseng  | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8   |          58 |
+| 18 | 18  | Hasan Asep      | Perempuan | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |          57 |
++----+-----+-----------------+-----------+------------+------------+----------+-----------+------------------------+-------------+
+18 rows in set (0.000 sec)
+
+
+Jawaban NO. 19 Gunakan alter tabel pada tabel pegawai untuk menambahkan kolom baru umur dengan tipe data
+
+MariaDB [dbpegawai]> ALTER TABLE pegawai ADD COLUMN umur INT NOT NULL;
+Query OK, 0 rows affected (0.005 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='33' WHERE id=1;
+Query OK, 1 row affected (0.006 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='34' WHERE id=2;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='35' WHERE id=3;
+Query OK, 1 row affected (0.006 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='36' WHERE id=4;
+Query OK, 1 row affected (0.002 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='37' WHERE id=5;
+Query OK, 1 row affected (0.001 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='38' WHERE id=6;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='39' WHERE id=7;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='40' WHERE id=8;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='41' WHERE id=9;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='42' WHERE id=10;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='43' WHERE id=11;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='44' WHERE id=12;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='45' WHERE id=13;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='46' WHERE id=14;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='47' WHERE id=15;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='47' WHERE id=16;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='48' WHERE id=17;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbpegawai]> UPDATE pegawai SET umur='49' WHERE id=18;
+Query OK, 1 row affected (0.007 sec)
+Rows matched: 1  Changed: 1  Warnings: 0 
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai;
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan | umur |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+|  1 | 01  | Ambias Tuti     | Perempuan     | Jakarta    | 1942-01-17 |        1 |         1 | Jl. Jakarta No. 71     |          55 |   33 |
+|  2 | 02  | Andino protomo  | Perempuan     | Jakarta    | 1985-02-05 |        1 |         1 | Jl. Jakarta No. 7      |          66 |   34 |
+|  3 | 03  | Ajeng Pratami   | Perempuan     | Jakarta    | 1978-05-10 |        1 |         1 | Jl. Jakarta No. 52     |          67 |   35 |
+|  4 | 04  | Mahdi Saputra   | Laki-Laki     | Jakarta    | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5      |          68 |   36 |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki     | Jakarta    | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6      |          62 |   37 |
+|  6 | 06  | Shopia Muller   | Perempuan     | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |          53 |   38 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome       | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4      |          43 |   39 |
+|  8 | 08  | Elena Petrova   | Perempuan     | Moscow     | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10      |          49 |   40 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London     | 1987-07-07 |        2 |         2 | Jl. London No. 8       |          54 |   41 |
+| 10 | 10  | Lea Dyobies     | Perempuan     | Tokyo      | 1998-01-11 |        2 |         2 | Jl. Tokyo No. 12       |          45 |   42 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki     | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |          65 |   43 |
+| 12 | 12  | Gavanni Sarah   | Perempuan     | Tanjung    | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1     |          66 |   44 |
+| 13 | 13  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          67 |   45 |
+| 14 | 14  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          68 |   46 |
+| 15 | 15  | Siti Annisa     | Perempuan     | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |          69 |   47 |
+| 16 | 16  | Saras Tatamin   | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |   47 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng  | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8   |          58 |   48 |
+| 18 | 18  | Hasan Asep      | Perempuan     | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |          57 |   49 |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+18 rows in set (0.001 sec)
+
+Jawaban NO. 20 Gunakan alter tabel pada tabel pegawai untuk mengubah nama kolom gender menjadi jenis_kelamin
+
+MariaDB [dbpegawai]> ALTER TABLE pegawai CHANGE COLUMN gender jenis_kelamin ENUM('Laki-Laki', 'Perempuan') NOT NULL;
+Query OK, 0 rows affected (0.010 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai;
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+
+|  1 | 01  | Ambias Tuti     | Perempuan     | Jakarta    | 1942-01-17 |        1 |         1 | Jl. Jakarta No. 71     |          55 |
+|  2 | 02  | Andino protomo  | Perempuan     | Jakarta    | 1985-02-05 |        1 |         1 | Jl. Jakarta No. 7      |          66 |
+|  3 | 03  | Ajeng Pratami   | Perempuan     | Jakarta    | 1978-05-10 |        1 |         1 | Jl. Jakarta No. 52     |          67 |
+|  4 | 04  | Mahdi Saputra   | Laki-Laki     | Jakarta    | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5      |          68 |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki     | Jakarta    | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6      |          62 |
+|  6 | 06  | Shopia Muller   | Perempuan     | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |          53 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome       | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4      |          43 |
+|  8 | 08  | Elena Petrova   | Perempuan     | Moscow     | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10      |          49 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London     | 1987-07-07 |        2 |         2 | Jl. London No. 8       |          54 |
+| 10 | 10  | Lea Dyobies     | Perempuan     | Tokyo      | 1998-01-11 |        2 |         2 | Jl. Tokyo No. 12       |          45 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki     | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |          65 |
+| 12 | 12  | Gavanni Sarah   | Perempuan     | Tanjung    | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1     |          66 |
+| 13 | 13  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          67 |
+| 14 | 14  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          68 |
+| 15 | 15  | Siti Annisa     | Perempuan     | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |          69 |
+| 16 | 16  | Saras Tatamin   | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng  | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8   |          58 |
+| 18 | 18  | Hasan Asep      | Perempuan     | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |          57 |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+
+18 rows in set (0.000 sec)
+
+Jawaban NO. 21 Tampilkan kolom2 tertentu di tabel pegawai (nip,nama,jenis_kelamin,alamat)
+
+MariaDB [dbpegawai]> SELECT nip, nama, jenis_kelamin, alamat FROM pegawai;
++-----+-----------------+---------------+------------------------+
+| nip | nama            | jenis_kelamin | alamat                 |
++-----+-----------------+---------------+------------------------+
+| 01  | Ambias Tuti     | Perempuan     | Jl. Jakarta No. 71     |
+| 02  | Andino protomo  | Perempuan     | Jl. Jakarta No. 7      |
+| 03  | Ajeng Pratami   | Perempuan     | Jl. Jakarta No. 52     |
+| 04  | Mahdi Saputra   | Laki-Laki     | Jl. Jakarta No. 5      |
+| 05  | Faisal Fairuz   | Laki-Laki     | Jl. Jakarta No. 6      |
+| 06  | Shopia Muller   | Perempuan     | Jl. Munich No. 6       |
+| 07  | Ismail Bin Mail | Laki-Laki     | Jl. Jakarta No. 4      |
+| 08  | Elena Petrova   | Perempuan     | Jl. Moscow No. 10      |
+| 09  | Jose Fernandez  | Laki-Laki     | Jl. London No. 8       |
+| 10  | Lea Dyobies     | Perempuan     | Jl. Tokyo No. 12       |
+| 11  | Muhammad Yusuf  | Laki-Laki     | Jl. Berlin  No. 12     |
+| 12  | Gavanni Sarah   | Perempuan     | Jl. Tanjung  No. 1     |
+| 13  | Mawar Nisanti   | Perempuan     | Jl. Depok  No. 7       |
+| 14  | Mawar Nisanti   | Perempuan     | Jl. Depok  No. 7       |
+| 15  | Siti Annisa     | Perempuan     | Jl. Bekasi  No. 5      |
+| 16  | Saras Tatamin   | Perempuan     | Jl. Bojonegoro  No. 88 |
+| 17  | Hasan Asep      | Laki-Laki     | Jl. Srengseng  No. 8   |
+| 18  | Hasan Asep      | Perempuan     | Jl. Gandul  No. 12     |
++-----+-----------------+---------------+------------------------+
+18 rows in set (0.000 sec)
+
+Jawaban NO. 22 Tampilkan baris2 tertentu di tabel pegawai (yang gendernya laki2 saja)
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE jenis_kelamin = 'Laki-Laki';
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat               | berat_badan |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+
+|  4 | 04  | Mahdi Saputra   | Laki-Laki     | Jakarta   | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5    |          68 |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki     | Jakarta   | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6    |          62 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome      | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4    |          43 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London    | 1987-07-07 |        2 |         2 | Jl. London No. 8     |          54 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki     | Berlin    | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12   |          65 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8 |          58 |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+
+6 rows in set (0.000 sec)
+
+Jawaban NO. 23 Tampilkan baris2 tertentu di tabel pegawai (yang bekerja di divisi IT dan gendernya perempuan)
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE iddivisi = 4 AND jenis_kelamin = 'Perempuan';
++----+-----+---------------+---------------+------------+------------+----------+-----------+------------------------+-------------+
+| id | nip | nama          | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan |
++----+-----+---------------+---------------+------------+------------+----------+-----------+------------------------+-------------+
+| 16 | 16  | Saras Tatamin | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |
+| 18 | 18  | Hasan Asep    | Perempuan     | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |          57 |
++----+-----+---------------+---------------+------------+------------+----------+-----------+------------------------+-------------+
+2 rows in set (0.001 sec)
+
+MariaDB [dbpegawai]>
+
+Jawaban NO. 24 Tampilkan data pegawai yang umurnya di atas 30 tahun dan lahirnya di kota jakarta dengan 
+klausa WHERE, AND
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE umur > 30 AND tmp_lahir = 'Jakarta';
++----+-----+----------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+| id | nip | nama           | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat             | berat_badan | umur |
++----+-----+----------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+|  1 | 01  | Ambias Tuti    | Perempuan     | Jakarta   | 1942-01-17 |        1 |         1 | Jl. Jakarta No. 71 |          55 |   33 |
+|  2 | 02  | Andino protomo | Perempuan     | Jakarta   | 1985-02-05 |        1 |         1 | Jl. Jakarta No. 7  |          66 |   34 |
+|  3 | 03  | Ajeng Pratami  | Perempuan     | Jakarta   | 1978-05-10 |        1 |         1 | Jl. Jakarta No. 52 |          67 |   35 |
+|  4 | 04  | Mahdi Saputra  | Laki-Laki     | Jakarta   | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5  |          68 |   36 |
+|  5 | 05  | Faisal Fairuz  | Laki-Laki     | Jakarta   | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6  |          62 |   37 |
++----+-----+----------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+5 rows in set (0.001 sec)
+
+Jawaban NO. 25 Tampilkan data pegawai yang bekerja pada divisi marketing, berumur lebih dari 30 tahun dan 
+berjenis kelamin perempuan dengan klausa WHERE, AND
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE iddivisi = 3 AND umur > 30 AND jenis_kelamin = 'Perempuan';
++----+-----+---------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+| id | nip | nama          | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat             | berat_badan | umur |
++----+-----+---------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+| 12 | 12  | Gavanni Sarah | Perempuan     | Tanjung   | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1 |          66 |   44 |
+| 13 | 13  | Mawar Nisanti | Perempuan     | Depok     | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7   |          67 |   45 |
+| 14 | 14  | Mawar Nisanti | Perempuan     | Depok     | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7   |          68 |   46 |
+| 15 | 15  | Siti Annisa   | Perempuan     | Bekasi    | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5  |          69 |   47 |
++----+-----+---------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+4 rows in set (0.001 sec)
+
+Jawaban NO. 26 Tampilkan data pegawai dengan klausa key (nip)
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE nip = '07';
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+-------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat            | berat_badan | umur |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+-------------------+-------------+------+
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome      | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4 |          43 |   39 |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+-------------------+-------------+------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 27 Tampilkan data pegawai dengan klausa non key (gender)
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE jenis_kelamin = 'Laki-Laki';
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat               | berat_badan | umur |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+|  4 | 04  | Mahdi Saputra   | Laki-Laki     | Jakarta   | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5    |          68 |   36 |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki     | Jakarta   | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6    |          62 |   37 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome      | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4    |          43 |   39 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London    | 1987-07-07 |        2 |         2 | Jl. London No. 8     |          54 |   41 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki     | Berlin    | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12   |          65 |   43 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8 |          58 |   48 |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+6 rows in set (0.001 sec)
+
+Jawaban NO. 28 Tampilkan data pegawai dengan klausa in (menyebutkan beberapa nip)
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE nip IN ('07', '08');
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+-------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat            | berat_badan | umur |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+-------------------+-------------+------+
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome      | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4 |          43 |   39 |
+|  8 | 08  | Elena Petrova   | Perempuan     | Moscow    | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10 |          49 |   40 |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+-------------------+-------------+------+
+2 rows in set (0.001 sec)
+
+Jawaban NO. 29 Tampilkan data pegawai dengan klausa not in (menyebutkan beberapa tempat lahir)
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE tmp_lahir NOT IN ('Bogor', 'Jakarta', 'Depok');
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan | umur |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+|  6 | 06  | Shopia Muller   | Perempuan     | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |          53 |   38 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome       | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4      |          43 |   39 |
+|  8 | 08  | Elena Petrova   | Perempuan     | Moscow     | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10      |          49 |   40 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London     | 1987-07-07 |        2 |         2 | Jl. London No. 8       |          54 |   41 |
+| 10 | 10  | Lea Dyobies     | Perempuan     | Tokyo      | 1998-01-11 |        2 |         2 | Jl. Tokyo No. 12       |          45 |   42 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki     | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |          65 |   43 |
+| 12 | 12  | Gavanni Sarah   | Perempuan     | Tanjung    | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1     |          66 |   44 |
+| 15 | 15  | Siti Annisa     | Perempuan     | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |          69 |   47 |
+| 16 | 16  | Saras Tatamin   | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |   47 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng  | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8   |          58 |   48 |
+| 18 | 18  | Hasan Asep      | Perempuan     | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |          57 |   49 |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+11 rows in set (0.001 sec)
+
+Jawaban NO. 30 Tampilkan data pegawai berdasarkan nama secara ascending
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai ORDER BY nama ASC;
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan | umur |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+|  3 | 03  | Ajeng Pratami   | Perempuan     | Jakarta    | 1978-05-10 |        1 |         1 | Jl. Jakarta No. 52     |          67 |   35 |
+|  1 | 01  | Ambias Tuti     | Perempuan     | Jakarta    | 1942-01-17 |        1 |         1 | Jl. Jakarta No. 71     |          55 |   33 |
+|  2 | 02  | Andino protomo  | Perempuan     | Jakarta    | 1985-02-05 |        1 |         1 | Jl. Jakarta No. 7      |          66 |   34 |
+|  8 | 08  | Elena Petrova   | Perempuan     | Moscow     | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10      |          49 |   40 |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki     | Jakarta    | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6      |          62 |   37 |
+| 12 | 12  | Gavanni Sarah   | Perempuan     | Tanjung    | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1     |          66 |   44 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng  | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8   |          58 |   48 |
+| 18 | 18  | Hasan Asep      | Perempuan     | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |          57 |   49 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome       | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4      |          43 |   39 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London     | 1987-07-07 |        2 |         2 | Jl. London No. 8       |          54 |   41 |
+| 10 | 10  | Lea Dyobies     | Perempuan     | Tokyo      | 1998-01-11 |        2 |         2 | Jl. Tokyo No. 12       |          45 |   42 |
+|  4 | 04  | Mahdi Saputra   | Laki-Laki     | Jakarta    | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5      |          68 |   36 |
+| 13 | 13  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          67 |   45 |
+| 14 | 14  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          68 |   46 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki     | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |          65 |   43 |
+| 16 | 16  | Saras Tatamin   | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |   47 |
+|  6 | 06  | Shopia Muller   | Perempuan     | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |          53 |   38 |
+| 15 | 15  | Siti Annisa     | Perempuan     | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |          69 |   47 |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+18 rows in set (0.001 sec)
+
+Jawaban NO. 31 Tampilkan data pegawai dari yang berat badan paling gemuk ke paling kurus
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai ORDER BY berat_badan DESC;
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan | umur |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| 15 | 15  | Siti Annisa     | Perempuan     | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |          69 |   47 |
+|  4 | 04  | Mahdi Saputra   | Laki-Laki     | Jakarta    | 0000-00-00 |        1 |         1 | Jl. Jakarta No. 5      |          68 |   36 |
+| 14 | 14  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          68 |   46 |
+|  3 | 03  | Ajeng Pratami   | Perempuan     | Jakarta    | 1978-05-10 |        1 |         1 | Jl. Jakarta No. 52     |          67 |   35 |
+| 13 | 13  | Mawar Nisanti   | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          67 |   45 |
+|  2 | 02  | Andino protomo  | Perempuan     | Jakarta    | 1985-02-05 |        1 |         1 | Jl. Jakarta No. 7      |          66 |   34 |
+| 12 | 12  | Gavanni Sarah   | Perempuan     | Tanjung    | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1     |          66 |   44 |
+| 11 | 11  | Muhammad Yusuf  | Laki-Laki     | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |          65 |   43 |
+|  5 | 05  | Faisal Fairuz   | Laki-Laki     | Jakarta    | 1982-07-15 |        1 |         1 | Jl. Jakarta No. 6      |          62 |   37 |
+| 16 | 16  | Saras Tatamin   | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |   47 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng  | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8   |          58 |   48 |
+| 18 | 18  | Hasan Asep      | Perempuan     | Gandul     | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12     |          57 |   49 |
+|  1 | 01  | Ambias Tuti     | Perempuan     | Jakarta    | 1942-01-17 |        1 |         1 | Jl. Jakarta No. 71     |          55 |   33 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London     | 1987-07-07 |        2 |         2 | Jl. London No. 8       |          54 |   41 |
+|  6 | 06  | Shopia Muller   | Perempuan     | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |          53 |   38 |
+|  8 | 08  | Elena Petrova   | Perempuan     | Moscow     | 1970-03-16 |        2 |         2 | Jl. Moscow No. 10      |          49 |   40 |
+| 10 | 10  | Lea Dyobies     | Perempuan     | Tokyo      | 1998-01-11 |        2 |         2 | Jl. Tokyo No. 12       |          45 |   42 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome       | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4      |          43 |   39 |
++----+-----+-----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+18 rows in set (0.001 sec)
+
+Jawaban NO. 32 Tampilkan data 5 pegawai teratas gunakan klausa limit
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai ORDER BY nama DESC LIMIT 5;
++----+-----+----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| id | nip | nama           | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan | umur |
++----+-----+----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| 15 | 15  | Siti Annisa    | Perempuan     | Bekasi     | 1989-03-24 |        3 |         3 | Jl. Bekasi  No. 5      |          69 |   47 |
+|  6 | 06  | Shopia Muller  | Perempuan     | Munich     | 1977-06-25 |        2 |         2 | Jl. Munich No. 6       |          53 |   38 |
+| 16 | 16  | Saras Tatamin  | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |   47 |
+| 11 | 11  | Muhammad Yusuf | Laki-Laki     | Berlin     | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12     |          65 |   43 |
+| 13 | 13  | Mawar Nisanti  | Perempuan     | Depok      | 1976-11-28 |        3 |         3 | Jl. Depok  No. 7       |          67 |   45 |
++----+-----+----------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+5 rows in set (0.001 sec)
+
+Jawaban NO. 33 Tampilkan data 5 pegawai terbawah gunakan klausa limit offset
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai ORDER BY nama ASC LIMIT 5 OFFSET 5;
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+| id | nip | nama            | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat               | berat_badan | umur |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+| 12 | 12  | Gavanni Sarah   | Perempuan     | Tanjung   | 1965-09-05 |        3 |         3 | Jl. Tanjung  No. 1   |          66 |   44 |
+| 17 | 17  | Hasan Asep      | Laki-Laki     | Srengseng | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8 |          58 |   48 |
+| 18 | 18  | Hasan Asep      | Perempuan     | Gandul    | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12   |          57 |   49 |
+|  7 | 07  | Ismail Bin Mail | Laki-Laki     | Rome      | 1980-10-08 |        2 |         2 | Jl. Jakarta No. 4    |          43 |   39 |
+|  9 | 09  | Jose Fernandez  | Laki-Laki     | London    | 1987-07-07 |        2 |         2 | Jl. London No. 8     |          54 |   41 |
++----+-----+-----------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+5 rows in set (0.001 sec)
+
+Jawaban NO. 34 Tampilkan jumlah pegawai gunakan fungsi aggregrat count
+
+MariaDB [dbpegawai]> SELECT COUNT(*) AS jumlah_pegawai FROM pegawai;
++----------------+
+| jumlah_pegawai |
++----------------+
+|             18 |
++----------------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 35 Tampilkan jumlah pegawai gunakan fungsi aggregrat count
+
+MariaDB [dbpegawai]> SELECT nip, nama, umur FROM pegawai WHERE umur = (SELECT MAX(umur) FROM pegawai);
++-----+------------+------+
+| nip | nama       | umur |
++-----+------------+------+
+| 18  | Hasan Asep |   49 |
++-----+------------+------+
+1 row in set (0.002 sec)
+
+Jawaban NO. 36 Tampilkan nip,nama pegawai, berat_badan yg paling kurus gunakan fungsi aggregrat min 
+
+MariaDB [dbpegawai]> SELECT nip, nama, umur FROM pegawai WHERE berat_badan = (SELECT MIN(berat_badan) FROM pegawai);
++-----+-----------------+------+
+| nip | nama            | umur |
++-----+-----------------+------+
+| 07  | Ismail Bin Mail |   39 |
++-----+-----------------+------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 37 Tampilkan data rata2 umur pegawai gunakan fungsi aggregrat avg 
+
+MariaDB [dbpegawai]> SELECT AVG(umur) AS rata_rata_umur FROM pegawai;
++----------------+
+| rata_rata_umur |
++----------------+
+|        41.3333 |
++----------------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 38 Tampilkan jumlah data pegawai yang laki2 dan berumur lebih dari 40 tahun dan berjabatan 
+Manajer, gunakan fungsi aggregrat count dan klausa AND
+
+MariaDB [dbpegawai]> SELECT COUNT(*) AS jumlah_pegawai FROM pegawai WHERE jenis_kelamin = 'Laki-Laki' AND umur > 40 AND idjabatan = 2;
++----------------+
+| jumlah_pegawai |
++----------------+
+|              1 |
++----------------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 39 Tampilkan jumlah data pegawai yang perempuan dan berumur kurang dari 40 tahun dan 
+berjabatan Staff, gunakan fungsi aggregrat count dan klausa AND
+
+MariaDB [dbpegawai]> SELECT COUNT(*) AS jumlah_pegawai FROM pegawai WHERE jenis_kelamin = 'Perempuan' AND umur < 40 AND idjabatan = 4;
++----------------+
+| jumlah_pegawai |
++----------------+
+|              0 |
++----------------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 40 Tampilkan jumlah data pegawai yang perempuan gunakan fungsi aggregrat count
+
+MariaDB [dbpegawai]> SELECT COUNT(*) AS jumlah_pegawai_perempuan FROM pegawai WHERE jenis_kelamin= 'Perempuan';
++--------------------------+
+| jumlah_pegawai_perempuan |
++--------------------------+
+|                       12 |
++--------------------------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 41 Tampilkan jumlah pegawai yang bekerja di divisi SDM dengan fungsi aggregrat sum dan klausa 
+WHERE
+
+MariaDB [dbpegawai]> SELECT SUM(CASE WHEN iddivisi = 1 THEN 1 ELSE 0 END) AS jumlah_pegawai_SDM FROM pegawai;
++--------------------+
+| jumlah_pegawai_SDM |
++--------------------+
+|                  5 |
++--------------------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 42 Tampilkan jumlah pegawai berdasarkan divisi masing2 menggunakan fungsi aggregrat count 
+dan klausa group by
+
+MariaDB [dbpegawai]> SELECT iddivisi, COUNT(*) AS jumlah_pegawai FROM pegawai GROUP BY iddivisi;
++----------+----------------+
+| iddivisi | jumlah_pegawai |
++----------+----------------+
+|        1 |              5 |
+|        2 |              5 |
+|        3 |              5 |
+|        4 |              3 |
++----------+----------------+
+4 rows in set (0.001 sec)
+
+Jawaban NO. 43 Tampilkan data jumlah pegawai berdasarkan gender, yg jumlah minimal 10 orang (gunakan 
+group by dan having)
+
+MariaDB [dbpegawai]> SELECT jenis_kelamin, COUNT(*) AS jumlah_pegawai FROM pegawai GROUP BY jenis_kelamin HAVING COUNT(*) >= 10;
++---------------+----------------+
+| jenis_kelamin | jumlah_pegawai |
++---------------+----------------+
+| Perempuan     |             12 |
++---------------+----------------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 44 Cari data pegawai yang berawalan kata Muhammad
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE nama LIKE 'Muhammad%';
++----+-----+----------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+| id | nip | nama           | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat             | berat_badan | umur |
++----+-----+----------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+| 11 | 11  | Muhammad Yusuf | Laki-Laki     | Berlin    | 1966-07-19 |        3 |         3 | Jl. Berlin  No. 12 |          65 |   43 |
++----+-----+----------------+---------------+-----------+------------+----------+-----------+--------------------+-------------+------+
+1 row in set (0.001 sec)
+
+Jawaban NO. 45 Cari data pegawai yang berakhiran kata Santoso
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE nama LIKE '%Santoso';
+Empty set (0.001 sec)
+
+MariaDB [dbpegawai]>
+
+Jawaban NO. 46 Cari data pegawai yang mengadung kata Asep
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE nama LIKE '%Asep%';
++----+-----+------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+| id | nip | nama       | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat               | berat_badan | umur |
++----+-----+------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+| 17 | 17  | Hasan Asep | Laki-Laki     | Srengseng | 1982-02-18 |        4 |         4 | Jl. Srengseng  No. 8 |          58 |   48 |
+| 18 | 18  | Hasan Asep | Perempuan     | Gandul    | 1997-07-23 |        4 |         4 | Jl. Gandul  No. 12   |          57 |   49 |
++----+-----+------------+---------------+-----------+------------+----------+-----------+----------------------+-------------+------+
+2 rows in set (0.001 sec)
+
+Jawaban NO. 47 Cari data pegawai yang huruf kelimanya huruf S
+
+MariaDB [dbpegawai]> SELECT * FROM pegawai WHERE nama LIKE '____s%';
++----+-----+---------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| id | nip | nama          | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat                 | berat_badan | umur |
++----+-----+---------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+| 16 | 16  | Saras Tatamin | Perempuan     | Bojonegoro | 1987-09-14 |        4 |         4 | Jl. Bojonegoro  No. 88 |          59 |   47 |
++----+-----+---------------+---------------+------------+------------+----------+-----------+------------------------+-------------+------+
+1 row in set (0.001 sec)
+
+MariaDB [dbpegawai]> \q
+Bye
+
+mahdi@MAHDI_SAPUTRA05 c:\xampp
+# exit
